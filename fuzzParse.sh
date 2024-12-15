@@ -7,11 +7,10 @@ input_file=$1
 output_file="fuzz_modified.txt"
 
 # Process each line in the input file
-while IFS= read -r line; do
+while IFS= read -r line || [ -n "$line" ]; do
   # Replace the query parameter values with FUZZ
   modified_line=$(echo "$line" | sed -E 's/(\?[a-zA-Z0-9_]+=)[^&]+/\1FUZZ/g')
   echo "$modified_line" >> "$output_file"
-done < "$input_file"
-
+done < "${input_file:-/dev/stdin}"	
 echo "URLs have been modified and saved to $output_file"
 
